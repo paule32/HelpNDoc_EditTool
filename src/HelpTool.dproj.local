@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899-12-30 00:00:00.000.201,=C:\Users\Jens Kallup\Documents\Embarcadero\Studio\Projekte\Unit2.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.076,=C:\Users\Jens Kallup\Documents\Embarcadero\Studio\Projekte\Unit2.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.345,C:\Users\Jens Kallup\Documents\Embarcadero\Studio\Projekte\Unit2.pas=E:\Projekte\HELP\Unit2.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.345,C:\Users\Jens Kallup\Documents\Embarcadero\Studio\Projekte\Unit2.dfm=E:\Projekte\HELP\Unit2.dfm</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.673,C:\Users\Jens Kallup\Documents\Embarcadero\Studio\Projekte\Project2.dproj=E:\Projekte\HELP\HelpTool.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.195,=C:\Users\Jens Kallup\Documents\Embarcadero\Studio\Projekte\Unit2.pas</Transaction>
+  </Transactions>
+</BorlandProject>

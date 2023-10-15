@@ -10,12 +10,15 @@ unit Unit2;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  Vcl.StdCtrls, TLHelp32, Clipbrd, System.Generics.Collections,
-  Vcl.ComCtrls, Vcl.ToolWin, System.ImageList, Vcl.ImgList, Vcl.Menus,
-  JvFullColorSpaces, JvFullColorCtrls, JvExStdCtrls, JvCombobox, JvColorCombo,
-  Vcl.ExtCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.ImageList,
+  System.Generics.Collections,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+  Vcl.ComCtrls, Vcl.ToolWin, Vcl.ImgList, Vcl.Menus,  Vcl.ExtCtrls,
+  TLHelp32, Clipbrd,
+  JvFullColorSpaces, JvFullColorCtrls, JvExStdCtrls, JvCombobox, JvMenus,
+  JvColorCombo, JvExComCtrls, JvToolBar, JvExExtCtrls, JvExtComponent,
+  JvOfficeColorButton, JvGradientCaption, JvRichEdit;
 
 type
   HWNDArray = array of THandle;
@@ -29,44 +32,120 @@ type
   end;
 
 type
+  // the original menu items are very tiny on big displays
+  // so, i decide to create a sub class, to change this...
+  TMyMenuPainter = class(TJvXPMenuItemPainter)
+  protected
+    // set the width, height
+    procedure Measure(
+      Item      : TMenuItem;
+      var Width : Integer;
+      var Height: Integer);
+
+    // paint the item's
+    procedure Paint(
+      AItem : TMenuItem;
+      ARect : TRect;
+      AState: TMenuOwnerDrawState);
+  public
+    constructor Create(AOwner: TComponent);
+    destructor Destroy;
+  end;
+
+type
+  // this is the main application form
   TForm2 = class(TForm)
-    PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
-    TabSheet2: TTabSheet;
-    ScrollBox1: TScrollBox;
     StatusBar1: TStatusBar;
-    PageControl2: TPageControl;
-    TabSheet3: TTabSheet;
-    ScrollBox2: TScrollBox;
-    RichEdit1: TRichEdit;
-    Button2: TButton;
-    Button1: TButton;
-    Label1: TLabel;
-    TabSheet4: TTabSheet;
-    ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
     ImageList1: TImageList;
     PopupMenu1: TPopupMenu;
     Consolas1: TMenuItem;
     Consolas2: TMenuItem;
     imeNewRoman1: TMenuItem;
     imeNewRoman2: TMenuItem;
-    Panel1: TPanel;
+    JvToolBar1: TJvToolBar;
+    ToolButton5: TToolButton;
+    JvPopupMenu1: TJvPopupMenu;
+    Open1: TMenuItem;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
+    Panel4: TPanel;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    ScrollBox1: TScrollBox;
+    Splitter1: TSplitter;
+    JvToolBar2: TJvToolBar;
+    ToolButton9: TToolButton;
+    ToolButton10: TToolButton;
+    Panel5: TPanel;
+    TreeView1: TTreeView;
+    Panel7: TPanel;
+    Panel6: TPanel;
+    Button1: TButton;
+    Button2: TButton;
+    Panel8: TPanel;
+    ToolBar1: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
     Panel2: TPanel;
     JvFontComboBox2: TJvFontComboBox;
-    JvColorComboBox1: TJvColorComboBox;
+    Panel1: TPanel;
+    Label2: TLabel;
+    Label3: TLabel;
+    JvOfficeColorButton2: TJvOfficeColorButton;
+    JvOfficeColorButton1: TJvOfficeColorButton;
+    JvToolBar3: TJvToolBar;
+    ToolButton11: TToolButton;
+    ToolButton12: TToolButton;
+    ToolButton13: TToolButton;
+    ToolButton14: TToolButton;
+    ImageList2: TImageList;
+    ToolButton15: TToolButton;
+    ToolButton16: TToolButton;
     Panel3: TPanel;
     ComboBox1: TComboBox;
+    Panel9: TPanel;
+    Label1: TLabel;
+    Label4: TLabel;
+    JvOfficeColorButton3: TJvOfficeColorButton;
+    JvOfficeColorButton4: TJvOfficeColorButton;
+    ToolButton17: TToolButton;
+    PageScroller1: TPageScroller;
+    JvGradientCaption1: TJvGradientCaption;
+    Splitter2: TSplitter;
+    Panel10: TPanel;
+    RichEdit1: TJvRichEdit;
     procedure Button1Click(Sender: TObject);
+    procedure ToolButton5Click(Sender: TObject);
+    procedure JvPopupMenu1MeasureItem(Sender: TMenu; Item: TMenuItem; var Width,
+      Height: Integer);
+    procedure Exit1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure JvFontComboBox2Change(Sender: TObject);
+    procedure ComboBox1Change(Sender: TObject);
+    procedure ToolButton1Click(Sender: TObject);
+    procedure RichEdit1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure Label2Click(Sender: TObject);
+    procedure Label3Click(Sender: TObject);
+    procedure JvOfficeColorButton2ColorChange(Sender: TObject);
+    procedure JvOfficeColorButton1ColorChange(Sender: TObject);
+    procedure Label4Click(Sender: TObject);
+    procedure Label1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     FCounter: Integer;
+    FMenuPainter: TMyMenuPainter;
   public
     function ArrayToString(const a: array of Char): string;
+
     function EnumWindowsCallback(hwnd: HWND; lParam: LPARAM): BOOL; stdcall;
     function FindChildWindowHandles(processID: DWORD): HWNDArray;
+
     function GetWindowCaption(hWnd: HWND): string;
     function GetForegroundWindowFromPoint(x, y: Integer): HWND;
     function GetRichViewText(hWnd: HWND): string;
@@ -78,6 +157,39 @@ var
 implementation
 
 {$R *.dfm}
+
+// the constructor for class TMyMenuPainter:
+constructor TMyMenuPainter.Create(AOwner: TComponent);
+begin
+  inherited Create(Aowner);
+end;
+
+// the destructor for TMyMenuPainter:
+destructor TMyMenuPainter.Destroy;
+begin
+  inherited Destroy;
+end;
+
+// set the width, and height of the menu items
+procedure TMyMenuPainter.Measure(
+  Item      : TMenuItem;
+  var Width : Integer;
+  var Height: Integer);
+begin
+  Width := 120;
+  Height := 32;
+end;
+
+// override member, to flag the items measure
+procedure TMyMenuPainter.Paint(
+  AItem : TMenuItem;
+  ARect : TRect;
+  AState: TMenuOwnerDrawState);
+begin
+  ARect.width := 120;
+  ARect.Height := 21;
+  inherited Paint(AItem,ARect,AState);
+end;
 
 // convert a dynamic "Array of Char" to "String"
 function TForm2.ArrayToString(const a: array of Char): string;
@@ -115,6 +227,125 @@ begin
     GetWindowText(hWnd, PChar(Result), len + 1);
   end else
   Result := '';
+end;
+
+procedure TForm2.JvFontComboBox2Change(Sender: TObject);
+begin
+  RichEdit1.SelAttributes.Height := System.SysUtils.StrToInt(ComboBox1.Text) + 8;
+  RichEdit1.SelAttributes.Name   := JvFontComboBox2.Text;
+end;
+
+// text format: background color
+procedure TForm2.JvOfficeColorButton1ColorChange(Sender: TObject);
+begin
+  RichEdit1.SelAttributes.BackColor := JvOfficeColorButton1.SelectedColor;
+end;
+
+// text format: forground color
+procedure TForm2.JvOfficeColorButton2ColorChange(Sender: TObject);
+begin
+  RichEdit1.SelAttributes.Color := JvOfficeColorButton2.SelectedColor;
+end;
+
+procedure TForm2.JvPopupMenu1MeasureItem(Sender: TMenu; Item: TMenuItem;
+  var Width, Height: Integer);
+begin
+  Width := 150;
+  Height := 41;
+end;
+
+// open color box, when the user clicj forground color lable
+procedure TForm2.Label1Click(Sender: TObject);
+begin
+  SendMessage(JvOfficeColorButton3.Handle, WM_LBUTTONDOWN,
+  2, JvOfficeColorButton3.Width - 2);
+  Sleep(50);
+  SendMessage(JvOfficeColorButton3.Handle, WM_LBUTTONUP,
+  2, JvOfficeColorButton3.Width - 2);
+end;
+
+procedure TForm2.Label2Click(Sender: TObject);
+begin
+  SendMessage(JvOfficeColorButton2.Handle, WM_LBUTTONDOWN,
+  2, JvOfficeColorButton2.Width - 2);
+  Sleep(50);
+  SendMessage(JvOfficeColorButton2.Handle, WM_LBUTTONUP,
+  2, JvOfficeColorButton2.Width - 2);
+end;
+
+// open color box, when the user clicj background color lable
+procedure TForm2.Label3Click(Sender: TObject);
+begin
+  SendMessage(JvOfficeColorButton1.Handle, WM_LBUTTONDOWN,
+  2, JvOfficeColorButton1.Width - 2);
+  Sleep(50);
+  SendMessage(JvOfficeColorButton1.Handle, WM_LBUTTONUP,
+  2, JvOfficeColorButton1.Width - 2);
+end;
+
+procedure TForm2.Label4Click(Sender: TObject);
+begin
+  SendMessage(JvOfficeColorButton4.Handle, WM_LBUTTONDOWN,
+  2, JvOfficeColorButton4.Width - 2);
+  Sleep(50);
+  SendMessage(JvOfficeColorButton4.Handle, WM_LBUTTONUP,
+  2, JvOfficeColorButton4.Width - 2);
+end;
+
+// when the user click into a position, check the text format,
+// and update the ui:
+procedure TForm2.RichEdit1MouseDown(
+  Sender: TObject;
+  Button: TMouseButton;
+  Shift : TShiftState;
+  X, Y  : Integer);
+begin
+  RichEdit1.SelLength := 1;
+
+  // font style: bold
+  if fsBold in RichEdit1.SelAttributes.Style then
+  ToolButton1.Down := true else
+  ToolButton1.Down := false;
+
+  // font style: italic
+  if fsItalic in RichEdit1.SelAttributes.Style then
+  ToolButton2.Down := true else
+  ToolButton2.Down := false;
+
+  // font style: underline
+  if fsUnderline in RichEdit1.SelAttributes.Style then
+  ToolButton3.Down := true else
+  ToolButton3.Down := false;
+
+  // font style: strike-out
+  if fsStrikeOut in RichEdit1.SelAttributes.Style then
+  ToolButton4.Down := true else
+  ToolButton4.Down := false;
+
+  // font style: name
+  JvFontComboBox2.Text := RichEdit1.SelAttributes.Name;
+
+  // font style: size
+  ComboBox1.Text := IntToStr(RichEdit1.SelAttributes.Height - 8);
+
+  // font style: foreground color/ background color
+  JvOfficeColorButton2.SelectedColor := RichEdit1.SelAttributes.Color;
+  JvOfficeColorButton1.SelectedColor := RichEdit1.SelAttributes.BackColor;
+end;
+
+// toolbutton: bold
+procedure TForm2.ToolButton1Click(Sender: TObject);
+begin
+  if fsBold in RichEdit1.SelAttributes.Style then
+  RichEdit1.SelAttributes.Style  := RichEdit1.SelAttributes.Style - [fsBold] else
+  RichEdit1.SelAttributes.Style  := RichEdit1.SelAttributes.Style + [fsBold];
+
+  ToolButton1.Down := not ToolButton1.Down;
+end;
+
+procedure TForm2.ToolButton5Click(Sender: TObject);
+begin
+  JvPopupMenu1.Popup(Mouse.CursorPos.X,Mouse.CursorPos.Y);
 end;
 
 // get the window from x,y coordinate
@@ -160,6 +391,27 @@ begin
 
   EnumWindows(@TForm2.EnumWindowsCallback, LPARAM(@data));
   Result := data.Handles;
+end;
+
+// this procedure does initialize some stuff, used later on form...
+procedure TForm2.FormCreate(Sender: TObject);
+begin
+  FMenuPainter := TMyMenuPainter.Create(nil);
+  JvPopupMenu1.ItemPainter := FMenuPainter;
+
+  JvGradientCaption1.Active := true;
+end;
+
+procedure TForm2.FormDestroy(Sender: TObject);
+begin
+  FMenuPainter.Free;
+  FMenuPainter := nil;
+end;
+
+procedure TForm2.FormShow(Sender: TObject);
+begin
+  ShowWindow(Handle,SW_MINIMIZE);
+  ShowWindow(Handle,SW_MAXIMIZE);
 end;
 
 procedure TForm2.Button1Click(Sender: TObject);
@@ -212,21 +464,6 @@ begin
         if priClass < 1 then
         ShowMessage('Error: GetPriorityClass');
         CloseHandle(hProc);
-
-        (*
-        // only for information debug:
-        // [..
-        s1 := ''
-        + #10 + 'Process Name   : = '   + ProcEntry.szExeFile
-        + #10 + 'Process ID     : = 0x' + IntToHex(ProcEntry.th32ProcessID)
-        + #10 + 'Thread Count   : = '   + IntToStr(ProcEntry.cntThreads);
-
-        if priClass > 0 then
-        s1 := s1
-        + #10 + 'Priority class : = '   + IntToStr(priClass);
-        ShowMessage(s1);
-        // ..]
-        *)
 
         // fill the sub-hwnd container:
         childWindowHandles := FindChildWindowHandles(ProcEntry.th32ProcessID);
@@ -336,6 +573,56 @@ begin
     end;
   end;
   CloseHandle(hSnap);
+end;
+
+procedure TForm2.Button2Click(Sender: TObject);
+var
+  s: String;
+begin
+  s := ''
+  + '{\rtf1\ansi'
+  + '{\trowd'
+  + '\clbrdrl\brdrs\brdrw200\clbrdrt\brdrs\brdrw200\clbrdrb\brdrs\brdrw200\clbrdrr\brdrs\brdrw200\cellx4000'
+  + 'cell 1\intbl\cell'
+  + 'cell 2\intbl\cell'
+  + 'cell 3\intbl\cell'
+  + '\row'
+  + '}}';
+(*
+  '{\rtf1\ansi\deff0'#13#10+
+  '\trowd'#13#10+
+  '\cellx2000'#13#10+
+  '\cellx2000'#13#10+
+  '\cellx3000'#13#10+
+  'cell 1\intbl\cell'#13#10+
+  'cell 2\intbl\cell'#13#10+
+  'cell 3\intbl\cell'#13#10+
+  '\row'#13#10+
+  '}' ;
+*)
+  try
+    RichEdit1.PlainText := false;
+    RichEdit1.Lines.Clear;
+    RichEdit1.Lines.Add(s);
+  except
+    on E: Exception do
+    begin
+      if E.ClassName = 'EOutOfResources' then
+      begin
+      end;
+    end;
+  end;
+end;
+
+procedure TForm2.ComboBox1Change(Sender: TObject);
+begin
+  RichEdit1.SelAttributes.Height := System.SysUtils.StrToInt(ComboBox1.Text) + 8;
+  RichEdit1.SelAttributes.Name   := JvFontComboBox2.Text;
+end;
+
+procedure TForm2.Exit1Click(Sender: TObject);
+begin
+  Close;
 end;
 
 end.

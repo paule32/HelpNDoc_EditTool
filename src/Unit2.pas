@@ -20,7 +20,7 @@ uses
   JvFullColorSpaces, JvFullColorCtrls, JvExStdCtrls, JvCombobox, JvMenus,
   JvColorCombo, JvExComCtrls, JvToolBar, JvExExtCtrls, JvExtComponent,
   JvOfficeColorButton, JvGradientCaption, JvRichEdit, JvExControls, JvxSlider,
-  JvPrvwDoc, JvComponentBase, JvPrvwRender;
+  JvPrvwDoc, JvComponentBase, JvPrvwRender, Data.DB;
 
 type
   HWNDArray = array of THandle;
@@ -157,6 +157,7 @@ type
     SelectAll1: TMenuItem;
     Delete1: TMenuItem;
     OpenDialog1: TOpenDialog;
+    DataSource1: TDataSource;
     procedure Button1Click(Sender: TObject);
     procedure ToolButton5Click(Sender: TObject);
     procedure JvPopupMenu1MeasureItem(Sender: TMenu; Item: TMenuItem; var W,H: Integer);
@@ -193,6 +194,16 @@ type
       Shift: TShiftState);
     procedure Undo1Click(Sender: TObject);
     procedure Delete1Click(Sender: TObject);
+    procedure JvOfficeColorButton4ColorChange(Sender: TObject);
+    procedure ToolButton16Click(Sender: TObject);
+    procedure ToolButton14Click(Sender: TObject);
+    procedure ToolButton15Click(Sender: TObject);
+    procedure ToolButton11Click(Sender: TObject);
+    procedure MenuItem3Click(Sender: TObject);
+    procedure Open1Click(Sender: TObject);
+    procedure ToolButton2Click(Sender: TObject);
+    procedure ToolButton3Click(Sender: TObject);
+    procedure ToolButton4Click(Sender: TObject);
   private
     FCounter: Integer;             // common used counter
     FMenuPainter: TMyMenuPainter;  // customized menu item painter
@@ -216,6 +227,8 @@ var
 implementation
 
 {$R *.dfm}
+
+uses Unit3;
 
 // the constructor for class TMyMenuPainter:
 constructor TMyMenuPainter.Create(AOwner: TComponent);
@@ -305,6 +318,11 @@ begin
   RichEdit1.SelAttributes.Color := JvOfficeColorButton2.SelectedColor;
 end;
 
+procedure TForm2.JvOfficeColorButton4ColorChange(Sender: TObject);
+begin
+  RichEdit1.Color := JvOfficeColorButton4.SelectedColor;
+end;
+
 procedure TForm2.JvPopupMenu1DrawItem(Sender: TMenu; Item: TMenuItem;
   Rect: TRect; State: TMenuOwnerDrawState);
 begin
@@ -357,6 +375,16 @@ begin
   2, JvOfficeColorButton4.Width - 2);
 end;
 
+// show a about box - code of conduct
+procedure TForm2.MenuItem3Click(Sender: TObject);
+begin
+  Application.CreateForm(TAboutForm, AboutForm);
+
+  AboutForm.ShowModal;
+  AboutForm.Free;
+  AboutForm := nil;
+end;
+
 procedure TForm2.MenuItem4Click(Sender: TObject);
 begin
   JvPreviewControl1.Hide;
@@ -364,6 +392,11 @@ begin
 
   RichEdit1.Show;
   RichEdit1.Enabled := true;
+end;
+
+procedure TForm2.Open1Click(Sender: TObject);
+begin
+  ToolButton16Click(Sender);
 end;
 
 procedure TForm2.Open1MeasureItem(Sender: TObject; ACanvas: TCanvas; var W,
@@ -525,23 +558,7 @@ begin
   // open file for content
   if (key = Ord('O')) and (Shift = [ssCtrl]) then
   begin
-    // set the directory near to application
-    OpenDialog1.InitialDir :=
-    ExtractFilePath(Application.ExeName);
-
-    // open the dialog, if something nok, then error
-    if not OpenDialog1.Execute then
-    begin
-      ShowMessage('something went wrong');
-      exit;
-    end;
-
-    // try to guess the file content
-    if ExtractFileExt(OpenDialog1.FileName) <> '.rtf' then
-    begin
-      ShowMessage('Error: File seems not be a RTF file.');
-      exit;
-    end;
+    ToolButton16Click(Sender);
   end;
 end;
 
@@ -609,6 +626,46 @@ begin
   end;
 end;
 
+// open existing file
+procedure TForm2.ToolButton11Click(Sender: TObject);
+begin
+  if (RichEdit1.SelStart > 0) and (RichEdit1.SelLength > 0) then
+  RichEdit1.CutToClipboard;
+end;
+
+procedure TForm2.ToolButton14Click(Sender: TObject);
+begin
+  if RichEdit1.CanRedo then
+     RichEdit1.Redo
+end;
+
+// restore old status
+procedure TForm2.ToolButton15Click(Sender: TObject);
+begin
+  RichEdit1.Undo;
+end;
+
+procedure TForm2.ToolButton16Click(Sender: TObject);
+begin
+  // set the directory near to application
+  OpenDialog1.InitialDir :=
+  ExtractFilePath(Application.ExeName);
+
+  // open the dialog, if something nok, then error
+  if not OpenDialog1.Execute then
+  begin
+    ShowMessage('something went wrong');
+    exit;
+  end;
+
+  // try to guess the file content
+  if ExtractFileExt(OpenDialog1.FileName) <> '.rtf' then
+  begin
+    ShowMessage('Error: File seems not be a RTF file.');
+    exit;
+  end;
+end;
+
 // toolbutton: bold
 procedure TForm2.ToolButton1Click(Sender: TObject);
 begin
@@ -617,6 +674,36 @@ begin
   RichEdit1.SelAttributes.Style  := RichEdit1.SelAttributes.Style + [fsBold];
 
   ToolButton1.Down := not ToolButton1.Down;
+end;
+
+// toolbutton: italic
+procedure TForm2.ToolButton2Click(Sender: TObject);
+begin
+  if fsItalic in RichEdit1.SelAttributes.Style then
+  RichEdit1.SelAttributes.Style  := RichEdit1.SelAttributes.Style - [fsItalic] else
+  RichEdit1.SelAttributes.Style  := RichEdit1.SelAttributes.Style + [fsItalic];
+
+  ToolButton2.Down := not ToolButton2.Down;
+end;
+
+// toolbutton: underline
+procedure TForm2.ToolButton3Click(Sender: TObject);
+begin
+  if fsUnderline in RichEdit1.SelAttributes.Style then
+  RichEdit1.SelAttributes.Style  := RichEdit1.SelAttributes.Style - [fsUnderline] else
+  RichEdit1.SelAttributes.Style  := RichEdit1.SelAttributes.Style + [fsUnderline];
+
+  ToolButton3.Down := not ToolButton3.Down;
+end;
+
+// toolbutton: strike-out
+procedure TForm2.ToolButton4Click(Sender: TObject);
+begin
+  if fsStrikeout in RichEdit1.SelAttributes.Style then
+  RichEdit1.SelAttributes.Style  := RichEdit1.SelAttributes.Style - [fsStrikeout] else
+  RichEdit1.SelAttributes.Style  := RichEdit1.SelAttributes.Style + [fsStrikeout];
+
+  ToolButton4.Down := not ToolButton4.Down;
 end;
 
 procedure TForm2.ToolButton5Click(Sender: TObject);

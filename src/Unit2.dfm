@@ -111,6 +111,7 @@ object Form2: TForm2
         Caption = 'Open'
         ImageIndex = 5
         Style = tbsTextButton
+        OnClick = ToolButton16Click
       end
       object ToolButton13: TToolButton
         Left = 99
@@ -125,6 +126,7 @@ object Form2: TForm2
         Caption = 'Redo'
         ImageIndex = 3
         Style = tbsTextButton
+        OnClick = ToolButton14Click
       end
       object ToolButton15: TToolButton
         Left = 297
@@ -132,6 +134,7 @@ object Form2: TForm2
         Caption = 'Undo'
         ImageIndex = 4
         Style = tbsTextButton
+        OnClick = ToolButton15Click
       end
       object ToolButton12: TToolButton
         Left = 396
@@ -154,6 +157,7 @@ object Form2: TForm2
         Caption = 'Cut'
         ImageIndex = 0
         Style = tbsTextButton
+        OnClick = ToolButton11Click
       end
       object PageScroller1: TPageScroller
         Left = 695
@@ -326,8 +330,8 @@ object Form2: TForm2
         end
       end
       object JvPreviewControl1: TJvPreviewControl
-        Left = 348
-        Top = 225
+        Left = 340
+        Top = 223
         Width = 150
         Height = 250
         TopRow = 0
@@ -452,18 +456,21 @@ object Form2: TForm2
         Top = 0
         Caption = 'ToolButton2'
         ImageIndex = 1
+        OnClick = ToolButton2Click
       end
       object ToolButton3: TToolButton
         Left = 130
         Top = 0
         Caption = 'ToolButton3'
         ImageIndex = 2
+        OnClick = ToolButton3Click
       end
       object ToolButton4: TToolButton
         Left = 195
         Top = 0
         Caption = 'ToolButton4'
         ImageIndex = 3
+        OnClick = ToolButton4Click
       end
       object Panel2: TPanel
         Left = 260
@@ -799,6 +806,7 @@ object Form2: TForm2
           Properties.SelectIfPopup = True
           Properties.FloatWindowCaption = 'Color Window'
           Properties.DragBarHint = 'Drag to float'
+          OnColorChange = JvOfficeColorButton4ColorChange
         end
       end
     end
@@ -1453,6 +1461,7 @@ object Form2: TForm2
     end
     object Open1: TMenuItem
       Caption = 'Open'
+      OnClick = Open1Click
       OnMeasureItem = Open1MeasureItem
     end
     object SaveAs1: TMenuItem
@@ -3908,7 +3917,7 @@ object Form2: TForm2
     end
     object MenuItem3: TMenuItem
       Caption = 'About ...'
-      OnClick = Exit1Click
+      OnClick = MenuItem3Click
     end
   end
   object JvPreviewRenderJvRichEdit1: TJvPreviewRenderJvRichEdit
@@ -3992,5 +4001,9 @@ object Form2: TForm2
   object OpenDialog1: TOpenDialog
     Left = 405
     Top = 381
+  end
+  object DataSource1: TDataSource
+    Left = 277
+    Top = 213
   end
 end

@@ -20,7 +20,15 @@ object Form2: TForm2
     Top = 631
     Width = 1121
     Height = 19
-    Panels = <>
+    Panels = <
+      item
+        Bevel = pbRaised
+        Text = 'Ready:'
+        Width = 100
+      end
+      item
+        Width = 50
+      end>
   end
   object JvToolBar1: TJvToolBar
     Left = 0
@@ -69,6 +77,7 @@ object Form2: TForm2
       Left = 159
       Top = 0
       Caption = 'Help'
+      DropdownMenu = JvPopupMenu2
       ImageIndex = 3
       Style = tbsTextButton
     end
@@ -224,7 +233,15 @@ object Form2: TForm2
         Height = 424
         Align = alClient
         Indent = 19
+        ShowRoot = False
         TabOrder = 0
+        Items.NodeData = {
+          0301000000380000000000000000000000FFFFFFFFFFFFFFFF00000000000000
+          0002000000010D500072006F006A0065006300740020004E0061006D0065003A
+          002C0000000000000000000000FFFFFFFFFFFFFFFF0000000000000000000000
+          00010754006F00700069006300200031002E0000000000000000000000FFFFFF
+          FFFFFFFFFF000000000000000000000000010841007000700065006E00640069
+          007800}
       end
       object Panel7: TPanel
         Left = 1
@@ -245,8 +262,8 @@ object Form2: TForm2
       Caption = 'Panel6'
       TabOrder = 2
       object Button1: TButton
-        Left = 2
-        Top = 391
+        Left = 10
+        Top = 367
         Width = 167
         Height = 41
         Caption = 'Get Editor Text'
@@ -254,8 +271,8 @@ object Form2: TForm2
         OnClick = Button1Click
       end
       object Button2: TButton
-        Left = 226
-        Top = 391
+        Left = 234
+        Top = 367
         Width = 167
         Height = 42
         Caption = 'Set Editor Text'
@@ -270,9 +287,67 @@ object Form2: TForm2
         Align = alTop
         HideSelection = False
         HideScrollBars = False
+        PopupMenu = JvPopupMenu4
         SelText = ''
+        StreamFormat = sfRichText
         TabOrder = 2
+        WantTabs = True
+        WordWrap = False
+        OnKeyDown = RichEdit1KeyDown
+        OnKeyPress = RichEdit1KeyPress
+        OnKeyUp = RichEdit1KeyUp
         OnMouseDown = RichEdit1MouseDown
+      end
+      object Panel13: TPanel
+        Left = 1
+        Top = 425
+        Width = 549
+        Height = 41
+        Align = alBottom
+        TabOrder = 3
+        ExplicitLeft = 112
+        ExplicitTop = 440
+        ExplicitWidth = 185
+        object JvxSlider1: TJvxSlider
+          Left = 127
+          Top = 1
+          Width = 150
+          Height = 40
+          TabOrder = 0
+        end
+        object Panel14: TPanel
+          Left = 1
+          Top = 1
+          Width = 120
+          Height = 39
+          Align = alLeft
+          Caption = 'Zoom: 100%'
+          TabOrder = 1
+        end
+      end
+      object JvPreviewControl1: TJvPreviewControl
+        Left = 348
+        Top = 225
+        Width = 150
+        Height = 250
+        TopRow = 0
+        SelectedPage = 1
+        DeviceInfo.LogPixelsX = 300
+        DeviceInfo.LogPixelsY = 300
+        DeviceInfo.PhysicalWidth = 2480
+        DeviceInfo.PhysicalHeight = 3507
+        DeviceInfo.PageWidth = 2400
+        DeviceInfo.PageHeight = 3281
+        DeviceInfo.OffsetLeft = 40
+        DeviceInfo.OffsetTop = 40
+        DeviceInfo.OffsetRight = 40
+        DeviceInfo.OffsetBottom = 40
+        Options.Rows = 1
+        Options.Scale = 10
+        ParentColor = False
+        PopupMenu = JvPopupMenu3
+        TabOrder = 4
+        Visible = False
       end
     end
     object Panel10: TPanel
@@ -284,6 +359,59 @@ object Form2: TForm2
       Anchors = [akTop, akRight, akBottom]
       Caption = 'Panel10'
       TabOrder = 3
+      object Splitter3: TSplitter
+        Left = 1
+        Top = 273
+        Width = 313
+        Height = 3
+        Cursor = crVSplit
+        Align = alTop
+        ExplicitWidth = 193
+      end
+      object Panel11: TPanel
+        Left = 1
+        Top = 1
+        Width = 313
+        Height = 272
+        Align = alTop
+        Caption = 'Panel11'
+        TabOrder = 0
+        object TreeView2: TTreeView
+          Left = 1
+          Top = 1
+          Width = 311
+          Height = 270
+          Align = alClient
+          Indent = 19
+          TabOrder = 0
+          ExplicitLeft = 2
+          ExplicitTop = 2
+        end
+      end
+      object Panel12: TPanel
+        Left = 1
+        Top = 276
+        Width = 313
+        Height = 190
+        Align = alClient
+        Caption = 'Panel12'
+        TabOrder = 1
+        ExplicitLeft = 56
+        ExplicitTop = 360
+        ExplicitWidth = 185
+        ExplicitHeight = 41
+        object TreeView3: TTreeView
+          Left = 1
+          Top = 1
+          Width = 311
+          Height = 188
+          Align = alClient
+          Indent = 19
+          TabOrder = 0
+          ExplicitLeft = 2
+          ExplicitTop = 2
+        end
+      end
     end
   end
   object Panel8: TPanel
@@ -1300,18 +1428,48 @@ object Form2: TForm2
     end
   end
   object JvPopupMenu1: TJvPopupMenu
-    Style = msXP
+    Style = msItemPainter
     ImageMargin.Left = 0
     ImageMargin.Top = 0
     ImageMargin.Right = 0
     ImageMargin.Bottom = 0
-    ImageSize.Height = 0
-    ImageSize.Width = 0
+    ImageSize.Height = 32
+    ImageSize.Width = 32
+    OnDrawItem = JvPopupMenu1DrawItem
     OnMeasureItem = JvPopupMenu1MeasureItem
-    Left = 85
-    Top = 246
+    Left = 109
+    Top = 288
+    object New1: TMenuItem
+      Caption = 'New ...'
+      object Project1: TMenuItem
+        Caption = 'Project'
+      end
+      object Project2: TMenuItem
+        Caption = '-'
+      end
+      object AssistentTemplate1: TMenuItem
+        Caption = 'Assistent Template'
+      end
+    end
     object Open1: TMenuItem
       Caption = 'Open'
+      OnMeasureItem = Open1MeasureItem
+    end
+    object SaveAs1: TMenuItem
+      Caption = 'Save As ...'
+    end
+    object Save1: TMenuItem
+      Caption = 'Save'
+    end
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object Print1: TMenuItem
+      Caption = 'Print'
+    end
+    object PrinterSetup1: TMenuItem
+      Caption = 'Printer Setup'
+      OnClick = PrinterSetup1Click
     end
     object N1: TMenuItem
       Caption = '-'
@@ -3728,5 +3886,111 @@ object Form2: TForm2
     EndColor = clYellow
     Left = 304
     Top = 399
+  end
+  object JvPopupMenu2: TJvPopupMenu
+    Style = msItemPainter
+    ImageMargin.Left = 0
+    ImageMargin.Top = 0
+    ImageMargin.Right = 0
+    ImageMargin.Bottom = 0
+    ImageSize.Height = 32
+    ImageSize.Width = 32
+    OnDrawItem = JvPopupMenu1DrawItem
+    OnMeasureItem = JvPopupMenu1MeasureItem
+    Left = 212
+    Top = 342
+    object MenuItem1: TMenuItem
+      Caption = 'Reference'
+      OnMeasureItem = Open1MeasureItem
+    end
+    object MenuItem2: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem3: TMenuItem
+      Caption = 'About ...'
+      OnClick = Exit1Click
+    end
+  end
+  object JvPreviewRenderJvRichEdit1: TJvPreviewRenderJvRichEdit
+    PrintPreview = JvPreviewControl1
+    RichEdit = RichEdit1
+    Left = 621
+    Top = 357
+  end
+  object JvPopupMenu3: TJvPopupMenu
+    Style = msItemPainter
+    ImageMargin.Left = 0
+    ImageMargin.Top = 0
+    ImageMargin.Right = 0
+    ImageMargin.Bottom = 0
+    ImageSize.Height = 32
+    ImageSize.Width = 32
+    OnDrawItem = JvPopupMenu1DrawItem
+    OnMeasureItem = JvPopupMenu1MeasureItem
+    Left = 65
+    Top = 424
+    object MenuItem4: TMenuItem
+      Caption = 'Switch'
+      OnClick = MenuItem4Click
+    end
+    object MenuItem5: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem6: TMenuItem
+      Caption = 'Settings'
+    end
+    object Print2: TMenuItem
+      Caption = 'Print'
+    end
+  end
+  object JvPopupMenu4: TJvPopupMenu
+    Style = msItemPainter
+    ImageMargin.Left = 0
+    ImageMargin.Top = 0
+    ImageMargin.Right = 0
+    ImageMargin.Bottom = 0
+    ImageSize.Height = 32
+    ImageSize.Width = 32
+    Left = 341
+    Top = 197
+    object Undo1: TMenuItem
+      Caption = 'Undo'
+      ShortCut = 16474
+      OnClick = Undo1Click
+    end
+    object Undo2: TMenuItem
+      Caption = '-'
+    end
+    object Cut1: TMenuItem
+      Caption = 'Cut'
+      OnClick = Cut1Click
+    end
+    object Copy1: TMenuItem
+      Caption = 'Copy'
+      ShortCut = 16451
+      OnClick = Copy1Click
+    end
+    object Delete1: TMenuItem
+      Caption = 'Delete'
+      ShortCut = 46
+      OnClick = Delete1Click
+    end
+    object Paste1: TMenuItem
+      Caption = 'Paste'
+      ShortCut = 16470
+      OnClick = Paste1Click
+    end
+    object Paste2: TMenuItem
+      Caption = '-'
+    end
+    object SelectAll1: TMenuItem
+      Caption = 'Select All'
+      ShortCut = 16449
+      OnClick = SelectAll1Click
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 405
+    Top = 381
   end
 end

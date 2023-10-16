@@ -12,13 +12,15 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.ImageList,
+  System.StrUtils,
   System.Generics.Collections,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ComCtrls, Vcl.ToolWin, Vcl.ImgList, Vcl.Menus,  Vcl.ExtCtrls,
   TLHelp32, Clipbrd,
   JvFullColorSpaces, JvFullColorCtrls, JvExStdCtrls, JvCombobox, JvMenus,
   JvColorCombo, JvExComCtrls, JvToolBar, JvExExtCtrls, JvExtComponent,
-  JvOfficeColorButton, JvGradientCaption, JvRichEdit;
+  JvOfficeColorButton, JvGradientCaption, JvRichEdit, JvExControls, JvxSlider,
+  JvPrvwDoc, JvComponentBase, JvPrvwRender;
 
 type
   HWNDArray = array of THandle;
@@ -38,18 +40,18 @@ type
   protected
     // set the width, height
     procedure Measure(
-      Item      : TMenuItem;
-      var Width : Integer;
-      var Height: Integer);
+      Item  : TMenuItem;
+      var W : Integer;
+      var H : Integer); override;
 
     // paint the item's
     procedure Paint(
       AItem : TMenuItem;
       ARect : TRect;
-      AState: TMenuOwnerDrawState);
+      AState: TMenuOwnerDrawState); override;
   public
-    constructor Create(AOwner: TComponent);
-    destructor Destroy;
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
   end;
 
 type
@@ -117,12 +119,48 @@ type
     Splitter2: TSplitter;
     Panel10: TPanel;
     RichEdit1: TJvRichEdit;
+    JvPopupMenu2: TJvPopupMenu;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    Panel11: TPanel;
+    Panel12: TPanel;
+    Splitter3: TSplitter;
+    TreeView2: TTreeView;
+    TreeView3: TTreeView;
+    Panel13: TPanel;
+    JvxSlider1: TJvxSlider;
+    Panel14: TPanel;
+    New1: TMenuItem;
+    SaveAs1: TMenuItem;
+    Save1: TMenuItem;
+    N2: TMenuItem;
+    Print1: TMenuItem;
+    PrinterSetup1: TMenuItem;
+    Project1: TMenuItem;
+    Project2: TMenuItem;
+    AssistentTemplate1: TMenuItem;
+    JvPreviewRenderJvRichEdit1: TJvPreviewRenderJvRichEdit;
+    JvPreviewControl1: TJvPreviewControl;
+    JvPopupMenu3: TJvPopupMenu;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
+    Print2: TMenuItem;
+    JvPopupMenu4: TJvPopupMenu;
+    Undo1: TMenuItem;
+    Undo2: TMenuItem;
+    Cut1: TMenuItem;
+    Copy1: TMenuItem;
+    Paste1: TMenuItem;
+    Paste2: TMenuItem;
+    SelectAll1: TMenuItem;
+    Delete1: TMenuItem;
+    OpenDialog1: TOpenDialog;
     procedure Button1Click(Sender: TObject);
     procedure ToolButton5Click(Sender: TObject);
-    procedure JvPopupMenu1MeasureItem(Sender: TMenu; Item: TMenuItem; var Width,
-      Height: Integer);
+    procedure JvPopupMenu1MeasureItem(Sender: TMenu; Item: TMenuItem; var W,H: Integer);
     procedure Exit1Click(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure JvFontComboBox2Change(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
@@ -137,9 +175,30 @@ type
     procedure Label1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Open1MeasureItem(Sender: TObject; ACanvas: TCanvas; var W,
+      H: Integer);
+    procedure JvPopupMenu1DrawItem(Sender: TMenu; Item: TMenuItem; Rect: TRect;
+      State: TMenuOwnerDrawState);
+    procedure PrinterSetup1Click(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure SelectAll1Click(Sender: TObject);
+    procedure Paste1Click(Sender: TObject);
+    procedure Cut1Click(Sender: TObject);
+    procedure Copy1Click(Sender: TObject);
+    procedure RichEdit1KeyPress(Sender: TObject; var Key: Char);
+    procedure RichEdit1KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure RichEdit1KeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Undo1Click(Sender: TObject);
+    procedure Delete1Click(Sender: TObject);
   private
-    FCounter: Integer;
-    FMenuPainter: TMyMenuPainter;
+    FCounter: Integer;             // common used counter
+    FMenuPainter: TMyMenuPainter;  // customized menu item painter
+    FSelectedAll: Boolean;         // flag for text "select all"
+    FIndex: Integer;               // text selection position
+    FTabIndentSpace: Integer;      // number of text tab ident chat's
   public
     function ArrayToString(const a: array of Char): string;
 
@@ -161,7 +220,7 @@ implementation
 // the constructor for class TMyMenuPainter:
 constructor TMyMenuPainter.Create(AOwner: TComponent);
 begin
-  inherited Create(Aowner);
+  inherited Create(AOwner);
 end;
 
 // the destructor for TMyMenuPainter:
@@ -172,12 +231,13 @@ end;
 
 // set the width, and height of the menu items
 procedure TMyMenuPainter.Measure(
-  Item      : TMenuItem;
-  var Width : Integer;
-  var Height: Integer);
+  Item  : TMenuItem;
+  var W : Integer;
+  var H : Integer);
 begin
-  Width := 120;
-  Height := 32;
+  W := 220;
+  H := 42;
+  inherited Measure(Item,W,H);
 end;
 
 // override member, to flag the items measure
@@ -186,9 +246,7 @@ procedure TMyMenuPainter.Paint(
   ARect : TRect;
   AState: TMenuOwnerDrawState);
 begin
-  ARect.width := 120;
-  ARect.Height := 21;
-  inherited Paint(AItem,ARect,AState);
+  inherited;
 end;
 
 // convert a dynamic "Array of Char" to "String"
@@ -247,11 +305,18 @@ begin
   RichEdit1.SelAttributes.Color := JvOfficeColorButton2.SelectedColor;
 end;
 
-procedure TForm2.JvPopupMenu1MeasureItem(Sender: TMenu; Item: TMenuItem;
-  var Width, Height: Integer);
+procedure TForm2.JvPopupMenu1DrawItem(Sender: TMenu; Item: TMenuItem;
+  Rect: TRect; State: TMenuOwnerDrawState);
 begin
-  Width := 150;
-  Height := 41;
+  Rect.Width := Rect.Width + 100;
+  Rect.Height := Rect.Height + 20;
+end;
+
+procedure TForm2.JvPopupMenu1MeasureItem(Sender: TMenu; Item: TMenuItem;
+  var w, h: Integer);
+begin
+  W := 250;
+  H := 41;
 end;
 
 // open color box, when the user clicj forground color lable
@@ -292,6 +357,194 @@ begin
   2, JvOfficeColorButton4.Width - 2);
 end;
 
+procedure TForm2.MenuItem4Click(Sender: TObject);
+begin
+  JvPreviewControl1.Hide;
+  JvPreviewControl1.Enabled := false;
+
+  RichEdit1.Show;
+  RichEdit1.Enabled := true;
+end;
+
+procedure TForm2.Open1MeasureItem(Sender: TObject; ACanvas: TCanvas; var W,
+  H: Integer);
+begin
+  W := 120;
+  H := 32;
+end;
+
+// RichEdit1: if content in clipboard, then paste it to the editor
+procedure TForm2.Paste1Click(Sender: TObject);
+begin
+  if RichEdit1.CanPaste then
+  RichEdit1.PasteFromClipboard;
+end;
+
+procedure TForm2.PrinterSetup1Click(Sender: TObject);
+begin
+  RichEdit1.Hide;
+  RichEdit1.Enabled := false;
+
+  JvPreviewControl1.Enabled := true;
+  JvPreviewControl1.Align := alClient;
+  JvPreviewControl1.Show;
+end;
+
+// currently listen for VK_TAB key in content editor
+procedure TForm2.RichEdit1KeyDown(
+  Sender: TObject; var
+  Key   : Word;
+  Shift : TShiftState);
+  var
+  SelStart    : Integer;
+  SelEnd      : Integer;
+  SelectedText: String;
+  IndentText  : String;
+  strList     : TStringList;
+  strLength   : Integer;
+  c, i, p     : Integer;
+  s1, s2, s3  : String;
+  textOK      : Boolean;
+begin
+  // tabulator key pressed
+  if key = VK_TAB then
+  begin
+    // check, if selected text available
+    if RichEdit1.SelLength > 0 then
+    begin
+      // save the current selection
+      SelStart := RichEdit1.SelStart;
+      SelEnd   := RichEdit1.SelLength;
+
+      // get the selected get
+      SelectedText := RichEdit1.SelText;
+
+      // create a copy of selected text
+      strList := TStringList.Create;
+      try
+        strList.Text := SelectedText;
+        SelectedText := strList.Text;
+
+        IndentText := '';
+
+        // ctrl + tab => reverse tab:
+        if ssShift in Shift then
+        begin
+          // check for underflow
+          if (SelStart - FTabIndentSpace) < FTabIndentSpace then
+          raise Exception.Create('Text Length Underflow.');
+
+          // the first line
+          RichEdit1.SelStart  := SelStart - 4;
+          RichEdit1.SelLength := 4;
+          RichEdit1.SelText   := '';
+
+          // length of first string - we use it later
+          p := Length(RichEdit1.Lines.Strings[0]);
+
+          // iterate through all rest lines
+          for i := 1 to RichEdit1.Lines.Count - 1 do
+          begin
+            s1 := RichEdit1.Lines.Strings[i];
+            textOK := false;
+
+            // loop tab char number, look, if the n-chars
+            // before are whitespace #32, else: nok
+            for c := 1 to FTabIndentSpace do
+            begin
+              if s1[c] = #32 then
+              begin
+                textOK := true;
+                continue;
+              end else
+              begin
+                textOK := false;
+                break;
+              end;
+            end;
+
+            // there are n-chars at left border, then indent back
+            if textOK then
+            begin
+              p := p + Length(s1) - FTabIndentSpace;
+
+              RichEdit1.SelStart := p;
+              RichEdit1.SelText := '';
+            end;
+          end;
+
+          exit;
+        end else
+        begin
+          // add tab space to each text line
+          for c := 0 to strList.Count - 1 do
+          begin
+            IndentText := IndentText
+            + StringOfChar(' ', FTabIndentSpace)
+            + strList.Strings[c] + #10;
+          end;
+        end;
+
+        // set the new indented text
+        RichEdit1.SelText   := IndentText;
+
+        // set new selection
+        RichEdit1.SelStart  := SelStart + FTabIndentSpace;
+        RichEdit1.SelLength := Length(IndentText);
+      finally
+        strList.Clear;
+        strList.Free;
+      end;
+    end;
+  end;
+end;
+
+// this is an other magic voodoo programming event handler -> why
+// must the developer provide a handler, that blocks keyboard input ?
+procedure TForm2.RichEdit1KeyPress(
+  Sender: TObject; var
+  Key: Char);
+begin
+  // tell the os, we catch the key observer
+  if key = #9 then key := #0;
+end;
+
+// i don't know why delphi need 3 event handlers for doing some
+// things in the same scope ?? magic voodoo programming ?
+procedure TForm2.RichEdit1KeyUp(
+  Sender: TObject; var
+  Key   : Word;
+  Shift : TShiftState);
+begin
+  // call undo text
+  if (key = Ord('Z')) and (Shift = [ssCtrl]) then
+  begin
+    RichEdit1.Undo;
+  end else
+
+  // open file for content
+  if (key = Ord('O')) and (Shift = [ssCtrl]) then
+  begin
+    // set the directory near to application
+    OpenDialog1.InitialDir :=
+    ExtractFilePath(Application.ExeName);
+
+    // open the dialog, if something nok, then error
+    if not OpenDialog1.Execute then
+    begin
+      ShowMessage('something went wrong');
+      exit;
+    end;
+
+    // try to guess the file content
+    if ExtractFileExt(OpenDialog1.FileName) <> '.rtf' then
+    begin
+      ShowMessage('Error: File seems not be a RTF file.');
+      exit;
+    end;
+  end;
+end;
+
 // when the user click into a position, check the text format,
 // and update the ui:
 procedure TForm2.RichEdit1MouseDown(
@@ -299,7 +552,15 @@ procedure TForm2.RichEdit1MouseDown(
   Button: TMouseButton;
   Shift : TShiftState;
   X, Y  : Integer);
+  var
+  APoint: TPoint;
 begin
+  if Button = mbRight then
+  begin
+    FIndex := RichEdit1.SelStart;
+    exit;
+  end;
+
   RichEdit1.SelLength := 1;
 
   // font style: bold
@@ -333,6 +594,21 @@ begin
   JvOfficeColorButton1.SelectedColor := RichEdit1.SelAttributes.BackColor;
 end;
 
+// RichEdit: select all text
+procedure TForm2.SelectAll1Click(Sender: TObject);
+begin
+  if not FSelectedAll then
+  begin
+    RichEdit1.SelectAll;
+    FSelectedAll := true;
+  end else
+  begin
+    RichEdit1.SelStart  := FIndex;
+    RichEdit1.SelLength := 0;
+    FSelectedAll := false;
+  end;
+end;
+
 // toolbutton: bold
 procedure TForm2.ToolButton1Click(Sender: TObject);
 begin
@@ -346,6 +622,16 @@ end;
 procedure TForm2.ToolButton5Click(Sender: TObject);
 begin
   JvPopupMenu1.Popup(Mouse.CursorPos.X,Mouse.CursorPos.Y);
+end;
+
+procedure TForm2.Undo1Click(Sender: TObject);
+var
+  key  : Word;
+  Shift: TShiftState;
+begin
+  key := Ord('Z');
+  shift := [ssCtrl];
+  RichEdit1KeyUp(Sender,key,shift);
 end;
 
 // get the window from x,y coordinate
@@ -396,10 +682,18 @@ end;
 // this procedure does initialize some stuff, used later on form...
 procedure TForm2.FormCreate(Sender: TObject);
 begin
-  FMenuPainter := TMyMenuPainter.Create(nil);
+  FMenuPainter := TMyMenuPainter.Create(Form2);
+  FMenuPainter.SelectionFrameBrush.Color := clYellow;
+
   JvPopupMenu1.ItemPainter := FMenuPainter;
+  JvPopupMenu2.ItemPainter := FMenuPainter;
+  JvPopupMenu3.ItemPainter := FMenuPainter;
+  JvPopupMenu4.ItemPainter := FMenuPainter;
 
   JvGradientCaption1.Active := true;
+
+  FSelectedAll := false;
+  FTabIndentSpace := 4;
 end;
 
 procedure TForm2.FormDestroy(Sender: TObject);
@@ -410,8 +704,8 @@ end;
 
 procedure TForm2.FormShow(Sender: TObject);
 begin
-  ShowWindow(Handle,SW_MINIMIZE);
   ShowWindow(Handle,SW_MAXIMIZE);
+  RichEdit1.SetFocus;
 end;
 
 procedure TForm2.Button1Click(Sender: TObject);
@@ -588,18 +882,7 @@ begin
   + 'cell 3\intbl\cell'
   + '\row'
   + '}}';
-(*
-  '{\rtf1\ansi\deff0'#13#10+
-  '\trowd'#13#10+
-  '\cellx2000'#13#10+
-  '\cellx2000'#13#10+
-  '\cellx3000'#13#10+
-  'cell 1\intbl\cell'#13#10+
-  'cell 2\intbl\cell'#13#10+
-  'cell 3\intbl\cell'#13#10+
-  '\row'#13#10+
-  '}' ;
-*)
+
   try
     RichEdit1.PlainText := false;
     RichEdit1.Lines.Clear;
@@ -620,9 +903,35 @@ begin
   RichEdit1.SelAttributes.Name   := JvFontComboBox2.Text;
 end;
 
+// RichEdit1: copy text to clipboard
+procedure TForm2.Copy1Click(Sender: TObject);
+begin
+  RichEdit1.CopyToClipboard;
+end;
+
+// RichEdit1: copy text to clipboard, and cut from editor
+procedure TForm2.Cut1Click(Sender: TObject);
+begin
+  RichEdit1.CutToClipboard;
+end;
+
+// delete a char or selected text from context text editor
+procedure TForm2.Delete1Click(Sender: TObject);
+begin
+  if (RichEdit1.SelStart > -1) and (RichEdit1.SelLength > 0) then
+  RichEdit1.SelText := '' else
+  if (RichEdit1.SelStart - 1) >= 0 then
+  begin
+    RichEdit1.SelStart  := RichEdit1.SelStart - 1;
+    RichEdit1.SelLength := 1;
+    RichEdit1.SelText   := '';
+  end;
+end;
+
+// Menu: File->Exit  close, and exit application
 procedure TForm2.Exit1Click(Sender: TObject);
 begin
-  Close;
+  Application.Terminate;
 end;
 
 end.

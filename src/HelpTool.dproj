@@ -136,6 +136,7 @@
             <Form>AboutForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Unit1.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -166,6 +167,12 @@
                 </DeployFile>
                 <DeployFile LocalName="Win32\Release\HelpTool.exe" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
+                        <RemoteName>HelpTool.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Release\HelpTool.exe" Configuration="Release" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>HelpTool.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

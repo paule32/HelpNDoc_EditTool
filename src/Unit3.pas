@@ -1,5 +1,5 @@
 ﻿// ---------------------------------------------------------------------
-// File:   copyTest.pas
+// File:   copyTestAboutForm.pas
 // Author: (c) 2023 by Jens Kallup - paule32
 //         all rights reserved.
 //

@@ -25,7 +25,8 @@ uses
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef,
   FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.VCLUI.Wait,
-  Data.DB, FireDAC.Comp.Client;
+  Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   HWNDArray = array of THandle;
@@ -161,6 +162,7 @@ type
     DeleteFilter1: TMenuItem;
     LocalConnection: TFDConnection;
     Button3: TButton;
+    FDQuery1: TFDQuery;
     procedure Button1Click(Sender: TObject);
     procedure ToolButton5Click(Sender: TObject);
     procedure Exit1Click(Sender: TObject);
@@ -597,6 +599,19 @@ begin
 
   // set database stuff
   LocalConnection.Params.Values['Database'] := FDatabaseName;
+  LocalConnection.Open;
+
+  // when the application is starting the first time,
+  // then prepare tables ...
+  FDQuery1.Close;
+  FDQUERy1.SQL.Clear;
+  FDQuery1.SQL.Add(''
+  + 'CREATE TABLE IF NOT EXISTS test ('
+  + 'id   INTEGER PRIMARY KEY,'
+  + 'col1 TEXT'
+  + ');');
+
+  FDQuery1.ExecSQL;
 end;
 
 // destroy event handler is fired when the application is terminated.
@@ -605,7 +620,12 @@ procedure TForm2.FormDestroy(Sender: TObject);
 var
   ini: TIniFile;
 begin
-  // first, we close database
+  // close database table
+  FDQuery1.SQL.Clear;
+  FDQuery1.Close;
+  FDQuery1.Free;
+
+  // then, we close database
   LocalConnection.Close;
 
   // write data to storage

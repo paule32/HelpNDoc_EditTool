@@ -4652,4 +4652,9 @@ object Form2: TForm2
     Left = 561
     Top = 192
   end
+  object FDQuery1: TFDQuery
+    Connection = LocalConnection
+    Left = 541
+    Top = 205
+  end
 end

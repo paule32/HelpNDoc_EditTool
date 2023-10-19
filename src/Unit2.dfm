@@ -385,16 +385,19 @@ object Form2: TForm2
         Width = 237
         Height = 360
         Align = alTop
-        Indent = 19
+        AutoExpand = True
+        Images = ImageList3
+        Indent = 27
         RowSelect = True
         TabOrder = 0
         Items.NodeData = {
           0301000000380000000500000005000000FFFFFFFFFFFFFFFF00000000000000
           0002000000010D500072006F006A0065006300740020004E0061006D0065003A
           002C0000000600000006000000FFFFFFFFFFFFFFFF0000000000000000000000
-          00010754006F00700069006300200031002E0000000000000000000000FFFFFF
+          00010754006F00700069006300200031002E0000000600000006000000FFFFFF
           FFFFFFFFFF000000000000000000000000010841007000700065006E00640069
           007800}
+        ExplicitLeft = -1
       end
       object Button3: TButton
         Left = 27
@@ -4654,7 +4657,7 @@ object Form2: TForm2
   end
   object FDQuery1: TFDQuery
     Connection = LocalConnection
-    Left = 541
-    Top = 205
+    Left = 592
+    Top = 302
   end
 end

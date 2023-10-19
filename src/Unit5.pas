@@ -12,7 +12,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  JvExStdCtrls, JvRichEdit, Vcl.Menus, JvMenus, Vcl.ExtCtrls;
+  JvExStdCtrls, JvRichEdit, Vcl.Menus, JvMenus, Vcl.ExtCtrls, JvComponentBase,
+  JvInterpreter;
 
 type
   TFrame5 = class(TFrame)
@@ -29,6 +30,20 @@ type
     SelectAll1: TMenuItem;
     Splitter1: TSplitter;
     Memo1: TMemo;
+    JvInterpreterProgram1: TJvInterpreterProgram;
+    Splitter2: TSplitter;
+    Memo2: TMemo;
+    JvPopupMenu1: TJvPopupMenu;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
+    MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
+    N1: TMenuItem;
+    Run1: TMenuItem;
     procedure RichEdit1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure RichEdit1KeyDown(Sender: TObject; var Key: Word;
@@ -42,18 +57,26 @@ type
     procedure Paste1Click(Sender: TObject);
     procedure Delete1Click(Sender: TObject);
     procedure Copy1Click(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem3Click(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
+    procedure MenuItem5Click(Sender: TObject);
+    procedure MenuItem6Click(Sender: TObject);
+    procedure MenuItem8Click(Sender: TObject);
+    procedure Memo1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
   public
     FTabIndentSpace: Integer;
     FSelectedAll: Boolean;
     FIndex: Integer;
+    FMemo2SelectedAll: Boolean;
   end;
 
 implementation
 
 {$R *.dfm}
 
-uses Unit2;
+uses Unit2, Scanner;
 
 // RichEdit1: copy text to clipboard
 procedure TFrame5.Copy1Click(Sender: TObject);
@@ -77,6 +100,70 @@ begin
     RichEdit1.SelStart  := RichEdit1.SelStart - 1;
     RichEdit1.SelLength := 1;
     RichEdit1.SelText   := '';
+  end;
+end;
+
+procedure TFrame5.Memo1KeyDown(
+  Sender: TObject; var
+  Key   : Word;
+  Shift : TShiftState);
+  var
+  s : String;
+begin
+  if key = VK_F2 then
+  begin
+    if Length(Form2.FEditorFrame.Memo1.Text) < 1 then
+    begin
+      ShowMessage('no source code');
+      exit;
+    end;
+
+    s := ExtractFilePath(Application.ExeName);
+    s := s + '\test.pas';
+
+    Form2.FEditorFrame.Memo1.Lines.WriteBOM := false;
+    Form2.FEditorFrame.Memo1.Lines.SaveToFile(s,TEncoding.UTF8);
+
+    LexScanner(s);
+  end;
+end;
+
+procedure TFrame5.MenuItem1Click(Sender: TObject);
+begin
+  Memo2.Undo;
+end;
+
+procedure TFrame5.MenuItem3Click(Sender: TObject);
+begin
+  Memo2.CutToClipboard;
+end;
+
+procedure TFrame5.MenuItem4Click(Sender: TObject);
+begin
+  Memo2.CopyToClipboard;
+end;
+
+procedure TFrame5.MenuItem5Click(Sender: TObject);
+begin
+  Memo2.SelText := '';
+end;
+
+procedure TFrame5.MenuItem6Click(Sender: TObject);
+begin
+  Memo2.PasteFromClipboard;
+end;
+
+procedure TFrame5.MenuItem8Click(Sender: TObject);
+begin
+  if not FMemo2SelectedAll then
+  begin
+    Memo2.SelectAll;
+    FMemo2SelectedAll := true;
+  end else
+  begin
+    Memo2.SelStart  := FIndex;
+    Memo2.SelLength := 0;
+    FSelectedAll := false;
   end;
 end;
 

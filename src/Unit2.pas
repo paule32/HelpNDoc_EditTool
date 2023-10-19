@@ -595,7 +595,9 @@ begin
   FEditorFrame.Parent  := Panel6;
   FEditorFrame.Align   := alClient;
   FEditorFrame.Visible := true;
+
   FEditorFrame.JvPopupMenu4.ItemPainter := FMenuPainter;
+  FEditorFrame.JvPopupMenu1.ItemPainter := FMenuPainter;
 
   // set database stuff
   LocalConnection.Params.Values['Database'] := FDatabaseName;
@@ -648,6 +650,10 @@ end;
 procedure TForm2.FormShow(Sender: TObject);
 begin
   ShowWindow(Handle,SW_MAXIMIZE);
+
+  TreeView1.AutoExpand := true;
+  TreeView1.FullExpand;
+
   FEditorFrame.RichEdit1.SetFocus;
 end;
 

@@ -61,6 +61,15 @@ object Frame5: TFrame5
       Width = 636
       Height = 117
       Align = alTop
+      Lines.Strings = (
+        'unit test;'
+        ''
+        'var'
+        '  i;'
+        'begin'
+        '  i := 12;'
+        '  write i;'
+        'end test;')
       TabOrder = 1
       OnKeyDown = Memo1KeyDown
       ExplicitLeft = -3

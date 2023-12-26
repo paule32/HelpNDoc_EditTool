@@ -11,10 +11,16 @@
 #pragma once
 
 // -----------------------------------------------------------------
-// we support only GNU-C/C++ compilers ...
+// we support only GNU-C/C++ and C++ Builder compilers ...
 // -----------------------------------------------------------------
-#if !defined(__GNUC__)
-#error only GNU-C/C++ Compiler supported.
+#ifdef __GNUC__
+  #if !defined(__BORLANDC__)
+  #error only GNU-C/C++ Compiler supported.
+  #endif
+#else
+  #if !defined(__BORLANDC__)
+  #error only GNU-C/C++ or C++ Builder Compiler supported.
+  #endif
 #endif
 
 // -----------------------------------------------------------------
@@ -29,7 +35,9 @@
 // MSYS2 is a set of tool chain for Microsot Windows OS.
 // -----------------------------------------------------------------
 #if !defined(__MINGW32__) || !defined(__MINGW64__)
-#error This Applications was created under Microsoft-Windows...
+  #if defined(__BORLANDC__) && !defined(__WIN32__)
+  #error This Applications was created under Microsoft-Windows...
+  #endif
 #else
 
 // -----------------------------------------------------------------
@@ -46,13 +54,17 @@
 // c++ header prototype's/signature's:
 // -----------------------------------------------------------------
 # include <iostream>        // std c++ signatures
+# include <cstdio>
 # include <string>
 # include <fstream>
 # include <cstdio>
 # include <cstdlib>
 # include <functional>
 # include <locale>
+# include <sstream>
 # include <exception>       // exception handler's
+
+# include <System.hpp>
 
 // -----------------------------------------------------------------
 // global per file used variables/declarations:
@@ -97,8 +109,8 @@ private:
 public:
     // -------------------------------------------------------------
     // ctor: initialize, and allocate memory; depend on a file name.
-    // -------------------------------------------------------------
-    Parser( char *filename );
+	// -------------------------------------------------------------
+	Parser( AnsiString *filename );
     Parser();
 
     virtual void yyerror(char * msg);
@@ -120,7 +132,7 @@ public:
     class ASM_Code {
     private:
         class MyErrorHandler : public ErrorHandler {
-        public:
+		public:
             void handleError(Error err, const char*, BaseEmitter*) override;
             //MyErrorHandler();
         };
@@ -136,30 +148,30 @@ public:
         FileLogger     *   logger;  // Logger should always survice CodeHolder
         FILE           *  logFile;  // todo: assembly output
     
-        FormatFlags  formatFlags;
-        x86::Compiler  *       cc;
-        Error                 err;
-        
-        MyErrorHandler * myErrorHandler;
-    public:
-        ASM_Code();
-       ~ASM_Code();
+		FormatFlags  formatFlags;
+		x86::Compiler  *       cc;
+		Error                 err;
 
-        // -------------------------------------------------------------
-        // Windows 32-Bit API ...
-        // -------------------------------------------------------------
-        void init_win32api();
+		MyErrorHandler * myErrorHandler;
+	public:
+		ASM_Code();
+	   ~ASM_Code();
 
-        void code_end     ();
-        void code_exec    ();
-        void code_display ();
-        
-    private:        
-        bool code_user32_MessageBoxA();
-    };
-    
+		// -------------------------------------------------------------
+		// Windows 32-Bit API ...
+		// -------------------------------------------------------------
+		void init_win32api();
+
+		void code_end     ();
+		void code_exec    ();
+		void code_display ();
+
+	private:
+		bool code_user32_MessageBoxA();
+	};
+
 private:
-    ASM_Code  * asm_code;
+	ASM_Code  * asm_code;
 };
 // -----------------------------------------------------------------
 extern Parser * parser;
@@ -169,3 +181,4 @@ extern void parser_cleanup();
 
 #endif   // __MINGW32__ || __MINGW64__
 #endif   // PARSER__H_
+

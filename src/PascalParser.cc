@@ -26,43 +26,15 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 /* HEADER SECTION */
-#if defined( _MSDOS ) || defined(MSDOS) || defined(__MSDOS__) 
-#define __MSDOS_AND_ALIKE
-#endif
 #if defined(_WINDOWS) && defined(_MSC_VER)
 #define __HAVE_NO_ALLOCA
 #define __MSDOS_AND_ALIKE
 #endif
 
-#ifndef alloca
-#if defined( __GNUC__)
-#define alloca __builtin_alloca
-
-#elif (!defined (__STDC__) && defined (sparc)) || defined (__sparc__) || defined (__sparc)  || defined (__sgi)
-#include <alloca.h>
-
-#elif defined (__MSDOS_AND_ALIKE)
 #include <malloc.h>
-#ifndef __TURBOC__
-/* MS C runtime lib */
-#define alloca _alloca
-#endif
 
-#elif defined(_AIX)
-#include <malloc.h>
-#pragma alloca
-
-#elif defined(__hpux)
-#ifdef __cplusplus
-extern "C" {
-void *alloca (unsigned int);
-};
-#else /* not __cplusplus */
 void *alloca ();
-#endif /* not __cplusplus */
 
-#endif /* not _AIX  not MSDOS, or __TURBOC__ or _AIX, not sparc.  */
-#endif /* alloca not defined.  */
 #ifdef c_plusplus
 #ifndef __cplusplus
 #define __cplusplus
@@ -78,23 +50,22 @@ void *alloca ();
 #endif
 #endif
 #include <stdio.h>
-#define YYBISON 1  
+#define YYBISON 1
 
 /* #line 73 "E:\\msys64\\mingw64\\bin\\bison.cc" */
 #line 85 "PascalParser.cc"
-#define YY_PascalParser_LSP_NEEDED 
+#define YY_PascalParser_LSP_NEEDED
 #define YY_PascalParser_ERROR_BODY  = 0
 #define YY_PascalParser_LEX_BODY  = 0
 #line 14 "pascal.yy"
 
 # include <stdio.h>
 # include <stdlib.h>
-# include <strings.h>
 
-#line 20 "pascal.yy"
+#line 19 "pascal.yy"
 typedef union {
-    int int_val;
-    char* string_val;
+	int int_val;
+	char* string_val;
 } yy_PascalParser_stype;
 #define YY_PascalParser_STYPE yy_PascalParser_stype
 
@@ -117,7 +88,7 @@ typedef union {
 #endif
 #endif
 #ifdef YYSTYPE
-#ifndef YY_PascalParser_STYPE 
+#ifndef YY_PascalParser_STYPE
 #define YY_PascalParser_STYPE YYSTYPE
 #endif
 #endif
@@ -145,7 +116,7 @@ typedef union {
 #ifndef YY_PascalParser_PURE
 
 /* #line 117 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 149 "PascalParser.cc"
+#line 148 "PascalParser.cc"
 
 #line 117 "E:\\msys64\\mingw64\\bin\\bison.cc"
 /*  YY_PascalParser_PURE */
@@ -154,14 +125,14 @@ typedef union {
 /* section apres lecture def, avant lecture grammaire S2 */
 
 /* #line 121 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 158 "PascalParser.cc"
+#line 157 "PascalParser.cc"
 
 #line 121 "E:\\msys64\\mingw64\\bin\\bison.cc"
 /* prefix */
 #ifndef YY_PascalParser_DEBUG
 
 /* #line 123 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 165 "PascalParser.cc"
+#line 164 "PascalParser.cc"
 
 #line 123 "E:\\msys64\\mingw64\\bin\\bison.cc"
 /* YY_PascalParser_DEBUG */
@@ -171,7 +142,7 @@ typedef union {
 #ifndef YY_PascalParser_LSP_NEEDED
 
 /* #line 128 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 175 "PascalParser.cc"
+#line 174 "PascalParser.cc"
 
 #line 128 "E:\\msys64\\mingw64\\bin\\bison.cc"
  /* YY_PascalParser_LSP_NEEDED*/
@@ -188,8 +159,8 @@ typedef
       int timestamp;
       int first_line;
       int first_column;
-      int last_line;
-      int last_column;
+	  int last_line;
+	  int last_column;
       char *text;
    }
   yyltype;
@@ -266,7 +237,7 @@ typedef
 #endif
 #ifdef YY_PascalParser_DEBUG
 #ifndef YYDEBUG
-#define YYDEBUG YY_PascalParser_DEBUG 
+#define YYDEBUG YY_PascalParser_DEBUG
 #endif
 #endif
 #ifndef YY_PascalParser_ERROR_VERBOSE
@@ -284,7 +255,7 @@ typedef
 /* TOKEN C */
 
 /* #line 236 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 288 "PascalParser.cc"
+#line 287 "PascalParser.cc"
 #define	UNKNOWN	258
 #define	TOK_PROGRAM	259
 #define	TOK_IDENTIFIER	260
@@ -319,7 +290,7 @@ typedef
 #define YY_PascalParser_INHERIT
 #endif
 #ifndef YY_PascalParser_MEMBERS
-#define YY_PascalParser_MEMBERS 
+#define YY_PascalParser_MEMBERS
 #endif
 #ifndef YY_PascalParser_LEX_BODY
 #define YY_PascalParser_LEX_BODY  
@@ -355,7 +326,7 @@ public:
 /* static const int token ... */
 
 /* #line 280 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 359 "PascalParser.cc"
+#line 358 "PascalParser.cc"
 static const int UNKNOWN;
 static const int TOK_PROGRAM;
 static const int TOK_IDENTIFIER;
@@ -385,7 +356,7 @@ static const int TOK_YYEOF;
 enum YY_PascalParser_ENUM_TOKEN { YY_PascalParser_NULL_TOKEN=0
 
 /* #line 283 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 389 "PascalParser.cc"
+#line 388 "PascalParser.cc"
 	,UNKNOWN=258
 	,TOK_PROGRAM=259
 	,TOK_IDENTIFIER=260
@@ -443,7 +414,7 @@ public:
 #if YY_PascalParser_USE_CONST_TOKEN != 0
 
 /* #line 314 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 447 "PascalParser.cc"
+#line 446 "PascalParser.cc"
 const int YY_PascalParser_CLASS::UNKNOWN=258;
 const int YY_PascalParser_CLASS::TOK_PROGRAM=259;
 const int YY_PascalParser_CLASS::TOK_IDENTIFIER=260;
@@ -481,7 +452,7 @@ YY_PascalParser_CONSTRUCTOR_CODE;
 #endif
 
 /* #line 325 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 485 "PascalParser.cc"
+#line 484 "PascalParser.cc"
 
 
 #define	YYFINAL		73
@@ -500,8 +471,8 @@ static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+	 2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+	 2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -546,9 +517,9 @@ static const short yyrhs[] = {    -1,
 
 #if YY_PascalParser_DEBUG != 0
 static const short yyrline[] = { 0,
-    40,    41,    45,    49,    53,    54,    55,    59,    60,    61,
-    62,    63,    66,    67,    68,    71,    72,    73,    76,    77,
-    80,    81,    85,    86,    87,    88,    92
+    39,    40,    44,    48,    52,    53,    54,    58,    59,    60,
+    61,    62,    65,    66,    67,    70,    71,    72,    75,    76,
+    79,    80,    84,    85,    86,    87,    91
 };
 
 static const char * const yytname[] = {   "$","error","$illegal.","UNKNOWN",
@@ -578,8 +549,8 @@ static const short yydefact[] = {     1,
      0,    27,     0,     4,     8,     8,     3,     0,     0,     5,
      5,    21,     0,     0,     0,     0,     0,     0,     0,     0,
      0,     8,     0,     0,     0,    23,    24,    25,    26,     0,
-     0,    21,    22,    19,     9,     0,    20,     0,     0,    16,
-    16,    13,     0,     6,     7,     8,     0,     8,     8,     0,
+	 0,    21,    22,    19,     9,     0,    20,     0,     0,    16,
+	16,    13,     0,     6,     7,     8,     0,     8,     8,     0,
     19,    12,     0,    11,    10,    13,     0,    14,    16,    17,
      0,     0,     0
 };
@@ -811,9 +782,9 @@ static void __yy_bcopy (from, to, count)
 #endif
 #endif
 {
-  register char *f = from;
-  register char *t = to;
-  register int i = count;
+  char *f = from;
+  char *t = to;
+  int i = count;
 
   while (i-- > 0)
     *t++ = *f++;
@@ -824,7 +795,7 @@ int
 #ifdef YY_USE_CLASS
  YY_PascalParser_CLASS::
 #endif
-     YY_PascalParser_PARSE(YY_PascalParser_PARSE_PARAM)
+	 YY_PascalParser_PARSE(YY_PascalParser_PARSE_PARAM)
 #ifndef __STDC__
 #ifndef __cplusplus
 #ifndef YY_USE_CLASS
@@ -834,10 +805,10 @@ YY_PascalParser_PARSE_PARAM_DEF
 #endif
 #endif
 {
-  register int yystate;
-  register int yyn;
-  register short *yyssp;
-  register YY_PascalParser_STYPE *yyvsp;
+  int yystate;
+  int yyn;
+  short *yyssp;
+  YY_PascalParser_STYPE *yyvsp;
   int yyerrstatus;      /*  number of tokens to shift before error messages enabled */
   int yychar1=0;          /*  lookahead token as an internal (translated) token number */
 
@@ -968,7 +939,7 @@ YYLABEL(yynewstate)
 #endif
 
 #if YY_PascalParser_DEBUG != 0
-      if (YY_PascalParser_DEBUG_FLAG)
+	  if (YY_PascalParser_DEBUG_FLAG)
 	fprintf(stderr, "Stack size increased to %d\n", yystacksize);
 #endif
 
@@ -1046,7 +1017,7 @@ YYLABEL(yybackup)
 
   /* yyn is what to do for this token type in this state.
      Negative => reduce, -yyn is rule number.
-     Positive => shift, yyn is new state.
+	 Positive => shift, yyn is new state.
        New state is final state => don't bother to shift,
        just return success.
      0, or most negative number => error.  */
@@ -1116,7 +1087,7 @@ YYLABEL(yyreduce)
 
 
 /* #line 811 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 1120 "PascalParser.cc"
+#line 1119 "PascalParser.cc"
 
   switch (yyn) {
 
@@ -1150,7 +1121,7 @@ YYLABEL(yyreduce)
       yylsp->first_line = YY_PascalParser_LLOC.first_line;
       yylsp->first_column = YY_PascalParser_LLOC.first_column;
       yylsp->last_line = (yylsp-1)->last_line;
-      yylsp->last_column = (yylsp-1)->last_column;
+	  yylsp->last_column = (yylsp-1)->last_column;
       yylsp->text = 0;
     }
   else
@@ -1171,7 +1142,7 @@ YYLABEL(yyreduce)
   if (yystate >= 0 && yystate <= YYLAST && yycheck[yystate] == *yyssp)
     yystate = yytable[yystate];
   else
-    yystate = yydefgoto[yyn - YYNTBASE];
+	yystate = yydefgoto[yyn - YYNTBASE];
 
   YYGOTO(yynewstate);
 
@@ -1202,7 +1173,7 @@ YYLABEL(yyerrlab)   /* here on detecting error */
 	    {
 	      strcpy(msg, "parse error");
 
-	      if (count < 5)
+		  if (count < 5)
 		{
 		  count = 0;
 		  for (x = (yyn < 0 ? -yyn : 0);
@@ -1275,7 +1246,7 @@ YYLABEL(yyerrpop)   /* pop the current state because it cannot handle the error 
     {
       short *ssp1 = yyss - 1;
       fprintf (stderr, "Error: state stack now");
-      while (ssp1 != yyssp)
+	  while (ssp1 != yyssp)
 	fprintf (stderr, " %d", *++ssp1);
       fprintf (stderr, "\n");
     }
@@ -1324,7 +1295,7 @@ YYLABEL(yyerrhandle)
 /* END */
 
 /* #line 1010 "E:\\msys64\\mingw64\\bin\\bison.cc" */
-#line 1328 "PascalParser.cc"
-#line 95 "pascal.yy"
+#line 1327 "PascalParser.cc"
+#line 94 "pascal.yy"
 
 

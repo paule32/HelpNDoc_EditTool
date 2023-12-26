@@ -4,7 +4,7 @@
         <ProjectVersion>19.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -130,24 +130,25 @@
         </DelphiCompile>
         <DCCReference Include="Unit2.pas">
             <Form>Form2</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Unit3.pas">
             <Form>AboutForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Unit1.pas"/>
         <DCCReference Include="Unit4.pas">
             <Form>PrintPreviewerFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="Unit5.pas">
             <Form>Frame5</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="Scanner.pas"/>
+        <DCCReference Include="DataModuleForm.pas">
+            <Form>DataModule6</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

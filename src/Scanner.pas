@@ -20,16 +20,16 @@ resourcestring
   ERR_PARSER_PROCEDURE_EXPECTED = 'Error 7: Parser: Procedure expected';
   ERR_PARSER_NO_CONST_ALLOWED = 'Error 8: Parser: No Constant allowed here';
 
-var
-  inFile: File;
-  Line: Integer;
-
   procedure LexScanner(filename: String);
-  procedure LexParser;
 
 implementation
 
-uses Vcl.Dialogs, System.SysUtils, Unit2;
+uses
+  Vcl.Forms, Vcl.Dialogs,
+  System.Classes,
+  System.SysUtils,
+  System.TypInfo,
+  Unit2;
 
 type
   TSymbol = (
@@ -62,17 +62,21 @@ type
   TIdentList = Array of TIdent;
 
   TOpCode = (lit,opr,lod,sto,cal,int,jmp,jpc,wri);
-  Instruction = packed record
+  TInstruction = packed record
     f: TOpCode; // command
     l: Byte;    // level
     a: Integer; // address
   end;
+  PInstruction = ^TInstruction;
 
-  TInstructions = Array of Instruction;
+  TInstructions = Array of TInstruction;
+var
+  ins: PInstruction;
+  insArr: TInstructions;
 
 var
   Table: TIdentList;
-  Code: TInstructions;
+  FileStream: TFileStream;
 
   cx: Integer;  // code position
 
@@ -83,6 +87,11 @@ var
   ch: Char;
   str: String;
   Symbol: TSymbol;
+
+var
+  inFile: File;
+  bcFile: File of Byte;
+  Line: Integer;
 
 procedure Error(ErrorText: String);
 var
@@ -117,6 +126,177 @@ begin
   raise Exception.Create(s);
 end;
 
+procedure Emulate;
+const
+  StackSize = 1024;
+var
+  p,b,t: Integer;
+  s: Array[1..StackSize] of Integer;
+  op: TOpCode;
+
+  function Base(a: Integer): Integer;
+  var
+    b1: Integer;
+  begin
+    b1 := b;
+    while a > 9 do
+    begin
+      b1 := s[b1];
+      dec(a);
+    end;
+    base := b1;
+  end;
+begin
+  Form2.FEditorFrame.Memo2.Lines.Add('Interpreting Code');
+//  showmessage('size 2: ' + inttostr(sizeof(instructions)));
+  SetLength(insArr, 4);
+  insArr[0].f := Lit;
+  insArr[1].f := Jmp;
+//  ins := @Instructions[0];
+//  ShowMessage(Format('OpCode: %s', [System.TypInfo.GetEnumName(TypeInfo(TOpCode), Ord(ins.f))]));
+  exit;
+  t := 0;
+  b := 1;
+  p := 0;
+  s[1] := 0;
+  s[2] := 0;
+  s[3] := 0;
+  (*
+  repeat
+    inc(p);
+//    op := Instructions[p].f;
+    exit;
+    with Instructions[p] do
+    begin
+    showmessage('huhu');
+      case f of
+        lit:
+        begin
+        showmessage('11111');
+          inc(t);
+          s[t] := a;
+        end;
+        lod:
+        begin
+        showmessage('2222');
+          inc(t);
+          s[t] := s[base(l)+a];
+        end;
+        sto:
+        begin
+        showmessage('3333');
+          s[base(l)+a] := s[t];
+          dec(t);
+        end;
+        cal:
+        begin
+        showmessage('444');
+          s[t + 1] := base(l);
+          s[t + 2] := b;
+          s[t + 3] := p;
+          b := t + 1;
+          p := a;
+        end;
+        int: t := t + a;
+        jmp: p := a;
+        jpc:
+        begin
+          if s[t] = 0 then p := a;
+          dec(t);
+        end;
+        wri:
+        begin
+        showmessage('6666');
+          Form2.FEditorFrame.Memo2.Lines.Add(
+          'wri: ' + IntToStr(s[t]));
+          dec(t);
+        end;
+        opr:
+        begin
+          case a of
+            0:
+            begin
+              t := b - 1;
+              p := s[ t + 3];
+              b := s[ t + 2];
+            end;
+            1:
+            begin
+              s[t] := -s[t];  // negation
+            end;
+            2:
+            begin
+              // addition
+              dec(t);
+              s[t] := s[t] + s[t + 1];
+            end;
+            3:
+            begin
+              // subtraction
+              dec(t);
+              s[t] := s[t] - s[t + 1];
+            end;
+            4:
+            begin
+              // multiplication
+              dec(t);
+              s[t] := s[t] * s[t + 1];
+            end;
+            5:
+            begin
+              // division
+              dec(t);
+              s[t] := s[t] div s[t + 1];
+            end;
+            8:
+            begin
+              // Equal
+              dec(t);
+              s[t] := Ord(s[t] = s[t + 1]);
+            end;
+            9:
+            begin
+              // unequal
+              dec(t);
+              s[t] := Ord(s[t] <> s[t + 1]);
+            end;
+            10:
+            begin
+              // smaller
+              dec(t);
+              s[t] := Ord(s[t] < s[t + 1]);
+            end;
+            11:
+            begin
+              // bigger
+              dec(t);
+              s[t] := Ord(s[t] > s[t + 1]);
+            end;
+            12:
+            begin
+              // biggerequal
+              dec(t);
+              s[t] := Ord(s[t] >= s[t + 1]);
+            end;
+            13:
+            begin
+              // smallerequal
+              dec(t);
+              s[t] := Ord(s[t] <= s[t + 1]);
+            end; else
+            begin
+              raise Exception.Create('Unknown Operand');
+            end;
+          end;
+        end; else
+        begin
+          raise Exception.Create('Unknown opcode');
+        end;
+      end;
+    end;
+  until p = 4;*)
+end;
+
 procedure Expect(Expected: TSymbol);
 begin
   if Symbol <> Expected then
@@ -125,24 +305,26 @@ end;
 
 procedure GenCode(f: TOpCode; l,a: Integer);
 begin
-  if cx <> Length(code) - 1 then
-  SetLength(code, Length(code) + 64);
-  Code[cx].f := f;
-  Code[cx].a := a;
-  Code[cx].l := l;
+  if cx > Length(insArr) - 1 then
+  SetLength(insArr, Length(insArr) + 64);
+  insArr[cx].f := f;
+  insArr[cx].a := a;
+  insArr[cx].l := l;
   inc (cx);
 end;
 
 procedure GetSym;
   procedure GetCh;
   begin
-    if not Eof(inFile) then
-    BlockRead(inFile, ch, 1) else
-    ch := ' ';
-    ch := UpCase(ch);  // case in-sensitive
+    if not (FileStream.Position > FileStream.Size) then
+    begin
+      FileStream.Read(ch,1);
+      ch := ' ';
+      ch := UpCase(ch);  // case in-sensitive
 
-    if ch = #13 then inc(Line);
-    if Ord(ch) < Ord(' ') then ch := ' ';
+      if ch = #13 then inc(Line);
+      if Ord(ch) < Ord(' ') then ch := ' ';
+    end;
   end;
   var i: TSymbol;
 begin
@@ -151,143 +333,141 @@ begin
     str := '';
     Symbol := sNone;
 
-    while (ch = ' ') and not Eof(inFile) do
+    while (CharInSet(ch, [' ']) and not Eof(inFile)) do
     GetCh;
 
     if Eof(inFile) then
     exit;
 
-    case ch of
-      // ident/reserved word
-      'A'..'Z', '_':
+    // ident/reserved word
+    if CharInSet(ch, ['A'..'Z', '_']) then
+    begin
+      while CharInSet(ch, ['A'..'Z','_','0'..'9']) do
       begin
-        while ch in ['A'..'Z','_','0'..'9'] do
+        str := str + ch;
+        GetCh;
+      end;
+      Symbol := sIdent;
+
+      for i := sUnknown to sNone do
+      begin
+        if str = cSymbols[I] then
+        begin
+          Symbol := i;
+          break;
+        end;
+      end;
+
+      if Symbol = sIdent then
+      ID := str;
+
+      exit;
+    end;
+
+    // symbols that consists only of one char
+    if CharInSet(ch, [';','+','-','=','#',',','.','*','/']) then
+    begin
+      str := ch;
+      Symbol := sUnknown;
+      for i := sUnknown to sNone do
+      begin
+        if str = cSymbols[i] then
+        begin
+          Symbol := i;
+          break;
+        end;
+      end;
+      GetCh;
+      exit;
+    end;
+
+    // chars, that can contain forward chars (=)
+    if CharInSet(ch, [':','<','>']) then
+    begin
+      str := ch;
+      GetCh;
+      if CharInSet(ch, ['=']) then str := str + ch;
+      GetCh;
+      Symbol := sUnknown;
+      for i := sUnknown to sNone do
+      begin
+        if str = cSymbols[i] then
+        begin
+          Symbol := i;
+          break;
+        end;
+      end;
+      exit;
+    end;
+
+    // parens, and comas
+    if CharInSet(ch, ['(',')']) then
+    begin
+      str := ch;
+      GetCh;
+      if (str = '(') and (CharInSet(ch, ['*'])) then
+      begin
+        // skip comment
+        GetCh;
+        while true do
+        begin
+          GetCh;
+          if CharInSet(ch, ['*']) then
+          begin
+            GetCh;
+            if CharInSet(ch, [')']) then
+            begin
+              Getch;
+              break;
+            end;
+          end else
+          begin
+            if Eof(inFile) then
+            break;
+          end;
+        end;
+      end else
+      begin
+        if str = '(' then
+        begin
+          Symbol := sOpenBracket;
+          exit;
+        end else
+        if str = ')' then
+        begin
+          Symbol := sCloseBracket;
+          exit;
+        end;
+      end;
+    end;
+
+    // digits
+    if CharInSet(ch, ['0'..'9','$']) then
+    begin
+      Symbol := sInteger;
+      str := ch;
+      GetCh;
+      if str = '$' then  // hex value
+      begin
+        while CharInSet(ch, ['0'..'9','A'..'F']) do
         begin
           str := str + ch;
           GetCh;
         end;
-        Symbol := sIdent;
-
-        for i := sUnknown to sNone do
-        begin
-          if str = cSymbols[I] then
-          begin
-            Symbol := i;
-            break;
-          end;
-        end;
-
-        if Symbol = sIdent then
-        ID := str;
-
         exit;
-      end;
-
-      // symbols that consists only of one char
-      ';','+','-','=','#',',','.','*','/':
+      end else
       begin
-        str := ch;
-        Symbol := sUnknown;
-        for i := sUnknown to sNone do
+        while CharInSet(ch, ['0'..'9']) do
         begin
-          if str = cSymbols[i] then
-          begin
-            Symbol := i;
-            break;
-          end;
-        end;
-        GetCh;
-        exit;
-      end;
-
-      // chars, that can contain forward chars (=)
-      ':','<','>':
-      begin
-        str := ch;
-        GetCh;
-        if ch = '=' then str := str + ch;
-        GetCh;
-        Symbol := sUnknown;
-        for i := sUnknown to sNone do
-        begin
-          if str = cSymbols[i] then
-          begin
-            Symbol := i;
-            break;
-          end;
-        end;
-        exit;
-      end;
-
-      // parens, and comas
-      '(',')':
-      begin
-        str := ch;
-        GetCh;
-        if (str = '(') and (ch = '*') then
-        begin
-          // skip comment
+          str := str + ch;
           GetCh;
-          while true do
-          begin
-            GetCh;
-            if ch = '*' then
-            begin
-              GetCh;
-              if ch = ')' then
-              begin
-                Getch;
-                break;
-              end;
-            end else
-            begin
-              if Eof(inFile) then
-              break;
-            end;
-          end;
-        end else
-        begin
-          if str = '(' then
-          begin
-            Symbol := sOpenBracket;
-            exit;
-          end else
-          if str = ')' then
-          begin
-            Symbol := sCloseBracket;
-            exit;
-          end;
         end;
+        exit;
       end;
-
-      // digits
-      '0'..'9','$':
-      begin
-        Symbol := sInteger;
-        str := ch;
-        GetCh;
-        if str = '$' then  // hex value
-        begin
-          while ch in ['0'..'9','A'..'F'] do
-          begin
-            str := str + ch;
-            GetCh;
-          end;
-          exit;
-        end else
-        begin
-          while ch in ['0'..'9'] do
-          begin
-            str := str + ch;
-            GetCh;
-          end;
-          exit;
-        end;
-      end;
-      else Error(ERR_SCANNER_UNEXPECTED_CHAR);
-    end;
-    Assert(Symbol <> sUnknown);
+    end
+    else Error(ERR_SCANNER_UNEXPECTED_CHAR);
   end;
+  Assert(Symbol <> sUnknown);
 end;
 
 procedure Module;
@@ -401,7 +581,6 @@ procedure Module;
     var
       identPos: Integer;
       ident: String;
-
       CodePosition1, CodePosition2: Integer;
     begin
       case Symbol of
@@ -450,7 +629,7 @@ procedure Module;
           CodePosition2 := cx;
           GenCode(jmp,0,0);
 
-          Code[CodePosition1].a := cx;
+          insArr[CodePosition1].a := cx;
 
           while Symbol = sElseIf do
           begin
@@ -466,11 +645,11 @@ procedure Module;
             Expect(sEnd);
             GetSym;
 
-            Code[CodePosition2].a := cx;
+            insArr[CodePosition2].a := cx;
             CodePosition2 := cx;
             GenCode(jmp,0,0);
 
-            Code[CodePosition1].a := cx;
+            insArr[CodePosition1].a := cx;
           end;
           if Symbol = sElse then
           begin
@@ -478,7 +657,7 @@ procedure Module;
             StatementSequence(TablePosition,lev);
             Expect(sEnd);
             GetSym;
-            Code[CodePosition2].a := cx;
+            insArr[CodePosition2].a := cx;
           end;
         end;
         sWhile: begin
@@ -498,7 +677,7 @@ procedure Module;
           GenCode(jmp,0,0);
           GetSym;
 
-          Code[CodePosition1].a := cx;
+          insArr[CodePosition1].a := cx;
         end;
         sBegin: begin
           GetSym;
@@ -570,8 +749,10 @@ procedure Module;
 
       Expect(sIdent);
       if ProcedureName <> ID then
+      begin
         Error(Format(ERR_PARSER_WRONG_PROCEDURE_ENDED,
         [ProcedureName, ID]));
+      end;
       GetSym;
       Expect(sSemiColon);
 
@@ -609,39 +790,37 @@ procedure Module;
 
     GenCode(jmp,0,0);
     while Symbol in [sVar, sConst, sProcedure] do
-    begin
-      case Symbol of
-        sVar: begin
-          GetSym;
+    case Symbol of
+      sVar: begin
+        GetSym;
+        VarDecl;
+        Expect(sSemiColon);
+        GetSym;
+        while Symbol = sIdent do
+        begin
           VarDecl;
           Expect(sSemiColon);
           GetSym;
-          while Symbol = sIdent do
-          begin
-            VarDecl;
-            Expect(sSemiColon);
-            GetSym;
-          end;
         end;
-        sConst: begin
-          GetSym;
+      end;
+      sConst: begin
+        GetSym;
+        ConstDecl;
+        Expect(sSemiColon);
+        GetSym;
+        while Symbol = sIdent do
+        begin
           ConstDecl;
           Expect(sSemiColon);
           GetSym;
-          while Symbol = sIdent do
-          begin
-            ConstDecl;
-            Expect(sSemiColon);
-            GetSym;
-          end;
         end;
-        sProcedure: begin
-          ProcedureDecl;
-        end;
+      end;
+      sProcedure: begin
+        ProcedureDecl;
       end;
     end;
 
-    Code[Table[InitTablePos].adr].a := cx;
+    insArr[Table[InitTablePos].adr].a := cx;
     with Table[InitTablePos] do
     begin
       adr := cx;
@@ -650,7 +829,6 @@ procedure Module;
 
     // allocate memory space
     GenCode(int,0,DataPos);
-
     result := TablePosition;
   end;
 var
@@ -664,7 +842,8 @@ begin
   showmessage(unitname);
   GetSym;
   Expect(sSemiColon);
-  showmessage('semi');
+  GetSym;
+
   TablePosition := Declarations(0,0);
   Expect(sBegin);
   GetSym;
@@ -676,11 +855,9 @@ begin
 
   GetSym;
   Expect(sIdent);
-  GetSym;
-
   if UnitName <> ID then
     raise Exception.Create(Format(
-    '%d: Warning: Module ID <> End ID',
+    '%d: Warning: Module ID <> End ID. Code already generated.',
     [Line]));
 
   GetSym;
@@ -695,30 +872,65 @@ end;
 
 procedure LexScanner(filename: String);
 var
-  F: File of Instruction;
   i: Integer;
+  s: String;
 begin
   try
     try
-      AssignFile(inFile, filename);
-      Reset(inFile,1);
+      if FileStream <> nil then
+      FileStream.Free;
+
+      FileStream := TFileStream.Create(filename, fmOpenRead);
+      FileStream.Seek(0, soFromBeginning);
+
       ch := ' ';
       Line := 1;
       cx := 0;
       SetLength(Table,1);
       GetSym;
       Module;
-            showmessage(id);
 
-      AssignFile(F,ChangeFileExt(filename,'.bin'));
-      ReWrite(F);
+      if FileStream <> nil then
+      FileStream.Free;
+      FileStream :=
+      TFileStream.Create(
+        ChangeFileExt(filename,'.bin'),
+        fmOpenWrite);
+      FileStream.Seek(0, soFromBeginning);
 
-      i := 0;
-      while i < cx do
+      showmessage('size: ' + inttostr(sizeof(insArr)));
+//      for i := 1 to sizeof(insArr) do
+//      Write(F,insArr[i]);
+
+      with Form2.FEditorFrame.Memo2.Lines do
       begin
-        Write(F,Code[i]);
-        inc(i);
+        Clear;
+        Add('Done, no syntax errors detected... Code success');
+        Add(Format('# Instructions: %d',[cx]));
+        Add(Format('# Code size   : %d',[(cx) * sizeof(insArr)]));
       end;
+
+      FileStream := TFileStream.Create(s, fmOpenRead);
+      FileStream.Seek(0,soFromBeginning);
+
+      SetLength(insArr,4);
+
+      for i := 0 to Length(insArr) - 1 do
+      begin
+        FileStream.Read(insArr[i], sizeof(TInstruction));
+        GetMem(ins, sizeof(TInstruction));
+        ins.f := insArr[i].f;
+        ShowMessage(Format('OpCode: %s', [System.TypInfo.GetEnumName(TypeInfo(TOpCode), Ord(insArr[i].f))]));
+      end;
+      ShowMessage(''
+      + 'fs: ' + inttostr(FileStream.Size) + #13#10
+      + 'is: ' + inttostr(sizeof(insArr)) + #13#10
+      + 'ns: ' + inttostr(FileStream.Size div sizeof(TInstruction)));
+
+      Emulate;
+
+      ShowMessage('33333');
+//      SetLength(Instructions,0);
 
     except
       on E: Exception do
@@ -727,26 +939,12 @@ begin
         + #13#10
         + 'Message: '
         + E.Message);
-        exit;
       end;
     end;
   finally
-    CloseFile(F);
-    CloseFile(inFile);
+    //CloseFile(F);
+    //CloseFile(inFile);
   end;
-
-  with Form2.FEditorFrame.Memo2.Lines do
-  begin
-    Clear;
-    Add('Done, no syntax errors detected... Code success');
-    Add(Format('# Instructions: %d',[cx]));
-    Add(Format('# Code size   : %d',[(cx) * sizeof(Instruction)]));
-  end;
-end;
-
-procedure LexParser;
-begin
-
 end;
 
 end.
